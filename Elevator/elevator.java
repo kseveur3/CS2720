@@ -23,8 +23,16 @@ public class elevator {
     /**
      * @param args the command line arguments
      */
-    public static void main(String[] args) {
+    public static void main(String[] args) throws InterruptedException {
+        
+    Thread thread = new Thread();
+    for(int c = 3; c>= 0; c--) {
+    thread.sleep(1000);
+    if(c>0) {
+    System.out.print(c + " ");
         // TODO code application logic here
     }
+    }
     
+}
 }

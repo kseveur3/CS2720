@@ -15,35 +15,50 @@ import java.util.*;
         
 public class elevatorClass {
     
-    // create an up-arraylist with random int data
+    // create a sorted up-arraylist with random int data
+        //check for dupes
     
     
-    //create a down-arraylist with random int data
+    //create a sorted down-arraylist with random int data
+        //check for dupes
     
     
-    //sort the up-arraylist in ascending order
-    
-    
-    //sort the down-arraylist in descending order
+    //Sort the arraylist arraySort(int[] array, String d)
+        //"d" direction is for ascending or descending
+
     
 
-    //movement method, noStop(current floor, direction)
-        //if direction equals up
-            //print "Going up: Now at floor {start} "
+    //movement method, noStop(current floor, next floor)
+        //if current floor < next floor
+            //print "Going up: Now at floor {current} "
     
-        //if direction equals down
-            //print "Going down: Now at floor {start}"
-        //wait 2 seconds
+        //if current floor > next floor
+            //print "Going down: Now at floor {next}"
+        //2 seconds countdown
     
     
     //Movement method, nextStop(starting floor, next floor)
         //if start is less than next
-            //print "Going up: Now at floor {start} and stopping to floor {next}
+            //print "Going up: Now at floor {start} and stopping at floor {next}
     
         //if start is more than start
-            //print "Going down: Now at floor {start} and stopping at floor {next}
-       
-        // countdown 3 seconds on screen
+            //print "Going down: Now at floor {next} and stopping at floor {start}
+        //3 seconds countdown on screen
+     
+    
+    // Countdown method timer(int seconds, String p) throws InterruptedException(
+        //if p == print
+            //print countdows to screen
+        //else 
+            //don't print countdown to screen
+    
+    /*static Thread thread = new Thread();
+    for(int c = 3; c>= 0; c--) {
+    thread.sleep(1000);
+    System.out.print("c ");
+    */
+        
+        
     
     
     
