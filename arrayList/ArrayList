@@ -9,24 +9,32 @@ package arraylist;
 public class ArrayList {
     
     public Object [] array;
-    public int sizeMult = 0;//Controls array increase size
+    public int sizeMult1 = 0;//Controls array increase size
+    public int sizeMult2 = 0;//Controls array increase size
     
-    
+    /**
+     * Default constructor
+     */
     public ArrayList() {
     // Default constructor
     //Create an arrayList with a default size of 10
     array = new Object[10];
-    sizeMult = 10;
-    }
-    
-    public ArrayList(int n) {
-        // Constructor that accepts an int that says the arraylist size
-        array = new Object[n];
-        sizeMult = n;
+    sizeMult1 = 10;
     }
     
     /**
-     * Works
+     * Secondary constructor
+     * @param n 
+     */
+    public ArrayList(int n) {
+        // Constructor that accepts an int that says the arraylist size
+        array = new Object[n];
+        sizeMult2 = n;
+    }
+    
+    /**
+     * Precondition: array has been constructed
+     * Postcondition: the value x is added to the first null element in array
      * @param x 
      */
     public void add(Object x) {
@@ -37,19 +45,23 @@ public class ArrayList {
             }
             if (array[i] == null) {
                 array[i] = x;
+                System.out.println("Value added: " + array[i]);
                 return;
             }
         }
+        
     }
     
     /**
-     * Works
+     * Precondition: array has been constructed
+     * Postcondition: the value x is added to the location in array specified
+     * by the index parameter
      * @param index
      * @param x 
      */
     public void add(int index, Object x) {
         //A method that allows you to place a value at a given location
-      if (index >= array.length) {
+      if (index == array.length-1) {
           upSize();
       }
       
@@ -58,10 +70,13 @@ public class ArrayList {
       } else {
           array[index] = x;
       }  
+      System.out.println("Value added: " + array[index]);
     }
     
     /**
-     * Works
+     * Precondition: Array is constructed
+     * Postcondition: Method returns the value in element specified by index. 
+     * If index is negative or out of bounds, an error is returned to user.
      * @param index
      * @return 
      */
@@ -75,7 +90,8 @@ public class ArrayList {
     }
     
     /**
-     * Works
+     * Precondition: Array is built.
+     * Postcondition: returns the length of the array starting at 1 (not 0).
      * @return 
      */
     public int size() {
@@ -84,7 +100,9 @@ public class ArrayList {
     }
     
     /**
-     * Works
+     * Precondition: Array is constructed.
+     * Postcondition: Method returns true if all elements in array are null and 
+     * false if any element has a non-null value in it.
      * @return 
      */
     public boolean isEmpty() {
@@ -97,6 +115,13 @@ public class ArrayList {
         return true;
     }
     
+    /**
+     * Precondition: Array is constructed.
+     * Postcondition: Returns true if the ob value is contained in the array. 
+     * A false is returned if the ob value is not found.
+     * @param ob
+     * @return 
+     */
     public boolean isIn(Object ob) {
         //A method that see if a particular object exist in the ArrayList
         for (int i = 0 ; i < array.length-1 ; i++) {
@@ -108,7 +133,9 @@ public class ArrayList {
     }
     
     /**
-     * Works
+     * Precondition: Array is constructed.
+     * Postcondition: Returns the element where the value of n is located. If 
+     * n is not in the array, a notification is sent to the user.
      * @param n
      * @return 
      */
@@ -128,31 +155,61 @@ public class ArrayList {
         return index;
     }
 
-    
+    /**
+     * Precondition: Array is constructed.
+     * Postcondition: Locates the element where n is located and replaces n
+     * with null. If n is not in the array an error message is sent to user.
+     * @param n 
+     */
     public void remove(Object n) {
         //A method that will remove the first occurrence of an 
         //Object starting from location 0
+        if (!isIn(n)) {
+            System.out.print(n + " is not in this array!");
+            return;
+        }
         int element = this.find(n);
+        System.out.println("Value removed: " + array[element]);
         array[element] = null;
 
     }
     
+    /**
+     * Postcondition: Increases the size of the element dependent on the
+     * constructor used to create the array.
+     */
     private void upSize() {
         // increase the size of the array
-        if (sizeMult == 10) {
-            Object [] newArray = new Object[array.length + sizeMult];
-            for (int i = 0; i < array.length; i++) {
-                newArray[i] = array[i];
+        int index = 0;
+        if (sizeMult1 != 0) {
+            Object [] newArray = new Object[array.length + sizeMult1];
+            for (Object ob1 : array) {
+                newArray[index] = array[index];
+                index++;
             }
             array = newArray; 
         } else {
-            Object [] newArray = new Object[sizeMult * 2];
-            for (int i = 0; i < array.length; i++) {
-                newArray[i] = array[i];
+            Object [] newArray = new Object[sizeMult2 * 2];
+            for (Object ob1 : array) {
+                newArray[index] = array[index];
+                index++;
             }
-            sizeMult *= 2;
+            sizeMult2 *= 2;
             array = newArray; 
         }
+    }
+    
+    /**
+     * Precondition: Array is constructed.
+     * Postcondition: Converts the values of the array to a string and
+     * prints them out to screen.
+     */
+    public void toArray() {
+        System.out.print("[ ");
+        for (Object obj : array) {
+            System.out.print(obj + " ");
+        }
+        System.out.print("]");
     }
     
     
