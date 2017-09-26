@@ -3,9 +3,30 @@ package arraylist;
 
 
 /**
+ * 1) Program Purpose
+ *      This program recreates the functionality of the ArrayList in the 
+ *      java library.
+ * 2) Solution and Algorithms
+ *      My solution involved breaking the tasks down to very individualized
+ *      methods. The main function primarily holds test cases for the ArrayList.
+ *      All algorithms used where custom. 
+ * 3) Data Structures
+ *      The only data structure used was an Array.
+ * 4) Program description and input/output
+ *      This program creates an Array that automatically increases in size
+ *      once a request is received to add a value into the last array element.
+ * 5) Class Purpose
+ *      The ArrayList class holds the utilities used to recreate the ArrayList 
+ *      functionality. The testarray class only holds the tests for the 
+ *      ArrayList class.
  *
+ * @author kevin Seveur
+ * 9/26/2017
  * @author kevinseveur
  */
+ 
+ 
+ 
 public class ArrayList {
     
     public Object [] array;
