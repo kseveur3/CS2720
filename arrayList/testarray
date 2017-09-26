@@ -5,6 +5,7 @@
  */
 package arraylist;
 
+
 /**
  *
  * @author kevinseveur
@@ -15,10 +16,13 @@ public class testarray {
      * @param args the command line arguments
      */
     public static void main(String[] args) {
-        /*ArrayList array = new ArrayList();
-        System.out.println("Array Length at start: " + array.size());
-        System.out.println("Is starting array empty? " +array.isEmpty());
-
+        ArrayList array = new ArrayList();
+        System.out.println("*************Default Contstructor Test ****"
+                + "**********");
+        System.out.println("\n*Size Test 1:\nArray Length at start should be 10 and it's: " 
+                + array.size());
+        System.out.println("\n*IsEmpty test 1:\nEmpty should be true and it's: " 
+                +array.isEmpty() + "\n");
         
         array.add(1);
         array.add(2);
@@ -30,19 +34,39 @@ public class testarray {
         array.add(8);
         array.add(9);
         array.add(10);
+                
+        System.out.println("\n*Size Test 2:\nArray size should now be 20 and "
+                + "it's: " +array.size());
         array.add(11);
         array.add(12);
+        System.out.println("\n*Array values are: ");
+        array.toArray();
+           
+        System.out.println("\n\n*Get Element Test:\nValue in "
+                + "element 5 should be 6 and it's: " +array.get(5));
         
-        System.out.println("Retrieval of the 5th element: " + array.get(5));
-        System.out.println("Is 4 in the array: " + array.isIn(4));
-        System.out.println("The number 4 is in element: "+ array.find(4));
-        System.out.println("Array Length at end: " + array.size());
-        System.out.println("Is ending array empty? " +array.isEmpty());
+        System.out.println("\n*IsIn Test 1:\nThe value \"6\" is in this array"
+                + " so this result should be true and it's: " +array.isIn(6));
         
-
+        System.out.println("\n*Find Value Test:\nThe value \"6\" should be in"
+                + " element 5 and it is in element: " +array.find(6));
+        
+        System.out.println("\n*Size Test 3:\nArray Length at this point should "
+                + "be 20 and it's: " + array.size());
+        
+        System.out.println("\n*IsEmpty Test 2:\nEmpty should be false and it's: " 
+                +array.isEmpty());
+        
+        System.out.println("\n*Remove Value Test 1: ");
+        
         array.remove(1);
         array.remove(2);
         array.remove(3);
+        
+        System.out.println("\n*After removing values 1, 2, and 3 the first "
+                + "3 elements should be null. The new array values are: ");
+        array.toArray();
+        
         array.remove(4);
         array.remove(5);
         array.remove(6);
@@ -52,37 +76,56 @@ public class testarray {
         array.remove(10);
         array.remove(11);
         array.remove(12);
-        System.out.println("Is Null in the array: " + array.isIn(null));
-        System.out.println("The number 13 is in element: "+ array.find(13));
-        System.out.println("Is final array empty? " +array.isEmpty());
-        System.out.println("Array Length at end: " + array.size());*/
         
+        System.out.println("\n*After removing values from all elements "
+                + "should be null. \nThe new array values are: ");
+        array.toArray();
         
+        System.out.println("\n\n*IsIn Test 2:\nThe value \"6\" has been removed"
+                + " so this result should be false and it's: " +array.isIn(6));
+        System.out.println("\n*IsEmpty test 3:\nEmpty should be true and it's: " 
+                +array.isEmpty());
+        System.out.println("\n*Size Test 2:\nArray Length at this point should "
+                + "still be 20 and it's: " + array.size());
+        
+        System.out.println("\n\n*************Second Contstructor Test ****"
+                + "**********");
         ArrayList array2 = new ArrayList(4);
-        System.out.println("Array2 Length: " + array2.size());
+        System.out.println("*Array2 length at start: " + array2.size());
         array2.add(1);
         array2.add(2);
         array2.add(3);
         array2.add(4);
+        System.out.println("\n\n*Size Test 1:\nArray Length at this point should "
+                + "be increased to 8 and it's: " + array2.size());
+        System.out.println("\n*Array values are: ");
+        array2.toArray();
+        System.out.println();
         array2.add(5);
         array2.add(6);
         array2.add(7);
         array2.add(8);
+        System.out.println("\n*Size Test 2:\nArray Length at this point should "
+                + "be 16 and it's: " + array2.size());
+        System.out.println("\n*Array values are: ");
+        array2.toArray();
+        System.out.println();
+        
         array2.add(9);
         array2.add(10);
         array2.add(11);
-        array2.add(12);
-        array2.add(13);
-        array2.add(14);
-        array2.add(15);
-        array2.add(16);
-        System.out.println("Array2 Length: " + array2.size());
-        
-        
-        
-        
+        array2.add(11,12);
+        array2.add(12,13);
+        array2.add(13,14);
+        array2.add(14,15);
+        array2.add(15,16);
+  
+        System.out.println("\n*Size Test 3:\nArray Length at this point should "
+                + "be 32 and it's: " + array2.size());
+        System.out.println("\n*Array values are: ");
+        array2.toArray();
+        System.out.println();
         
         
     }
-    
 }
