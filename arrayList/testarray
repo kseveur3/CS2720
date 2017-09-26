@@ -1,0 +1,88 @@
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package arraylist;
+
+/**
+ *
+ * @author kevinseveur
+ */
+public class testarray {
+
+    /**
+     * @param args the command line arguments
+     */
+    public static void main(String[] args) {
+        /*ArrayList array = new ArrayList();
+        System.out.println("Array Length at start: " + array.size());
+        System.out.println("Is starting array empty? " +array.isEmpty());
+
+        
+        array.add(1);
+        array.add(2);
+        array.add(3);
+        array.add(4);
+        array.add(5);
+        array.add(6);
+        array.add(7);
+        array.add(8);
+        array.add(9);
+        array.add(10);
+        array.add(11);
+        array.add(12);
+        
+        System.out.println("Retrieval of the 5th element: " + array.get(5));
+        System.out.println("Is 4 in the array: " + array.isIn(4));
+        System.out.println("The number 4 is in element: "+ array.find(4));
+        System.out.println("Array Length at end: " + array.size());
+        System.out.println("Is ending array empty? " +array.isEmpty());
+        
+
+        array.remove(1);
+        array.remove(2);
+        array.remove(3);
+        array.remove(4);
+        array.remove(5);
+        array.remove(6);
+        array.remove(7);
+        array.remove(8);
+        array.remove(9);
+        array.remove(10);
+        array.remove(11);
+        array.remove(12);
+        System.out.println("Is Null in the array: " + array.isIn(null));
+        System.out.println("The number 13 is in element: "+ array.find(13));
+        System.out.println("Is final array empty? " +array.isEmpty());
+        System.out.println("Array Length at end: " + array.size());*/
+        
+        
+        ArrayList array2 = new ArrayList(4);
+        System.out.println("Array2 Length: " + array2.size());
+        array2.add(1);
+        array2.add(2);
+        array2.add(3);
+        array2.add(4);
+        array2.add(5);
+        array2.add(6);
+        array2.add(7);
+        array2.add(8);
+        array2.add(9);
+        array2.add(10);
+        array2.add(11);
+        array2.add(12);
+        array2.add(13);
+        array2.add(14);
+        array2.add(15);
+        array2.add(16);
+        System.out.println("Array2 Length: " + array2.size());
+        
+        
+        
+        
+        
+        
+    }
+    
+}
