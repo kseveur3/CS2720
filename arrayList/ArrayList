@@ -1,6 +1,5 @@
-
 package arraylist;
-import java.util.Arrays;
+//import java.util.Arrays;
 
 
 /**
@@ -9,8 +8,8 @@ import java.util.Arrays;
  */
 public class ArrayList {
     
-    private Object [] array;
-    private int sizeMult = 0;//Controls array increase size
+    public Object [] array;
+    public int sizeMult = 0;//Controls array increase size
     
     
     public ArrayList() {
@@ -26,6 +25,10 @@ public class ArrayList {
         sizeMult = n;
     }
     
+    /**
+     * Works
+     * @param x 
+     */
     public void add(Object x) {
         // A method that allows you to place a value at the end of the ArrayList
         for (int i = 0; i < array.length; i++) {
@@ -39,6 +42,11 @@ public class ArrayList {
         }
     }
     
+    /**
+     * Works
+     * @param index
+     * @param x 
+     */
     public void add(int index, Object x) {
         //A method that allows you to place a value at a given location
       if (index >= array.length) {
@@ -52,20 +60,33 @@ public class ArrayList {
       }  
     }
     
+    /**
+     * Works
+     * @param index
+     * @return 
+     */
     public Object get(int index) {
         //A method that allows you to retrieve a value from a given location
-        if (index < 0 || index <= array.length) {
+        if (index < 0 || index >= array.length) {
           System.out.println("You have specified an improper location value");
           System.exit(0);
       } 
         return array[index]; 
     }
     
+    /**
+     * Works
+     * @return 
+     */
     public int size() {
         //A method that allows you the number of elements in the the ArrayList
         return array.length;
     }
     
+    /**
+     * Works
+     * @return 
+     */
     public boolean isEmpty() {
         //A method would test to see if the ArrayList is empty
         for (Object obj: array) {
@@ -78,22 +99,42 @@ public class ArrayList {
     
     public boolean isIn(Object ob) {
         //A method that see if a particular object exist in the ArrayList
-        for (Object obj: array) {
-            if (obj.equals(ob)) {
-                return true;
-            }
+        for (int i = 0 ; i < array.length-1 ; i++) {
+           if (array[i] == ob) {
+               return true; 
+           }
         }
         return false;
     }
     
+    /**
+     * Works
+     * @param n
+     * @return 
+     */
     public int find (Object n) {
         //A method that will return the location of first occurrence of an 
         //Object starting from location 0
+        int index = 0;
+ 
+        if (!isIn(n)) {
+            System.out.println("The value " + n + " is not in the array!");
+            return -1;
+        } else {
+            while (array[index] != n) {
+                index++;      
+            }
+        }
+        return index;
     }
+
     
-    public void remove (Object n) {
+    public void remove(Object n) {
         //A method that will remove the first occurrence of an 
         //Object starting from location 0
+        int element = this.find(n);
+        array[element] = null;
+
     }
     
     private void upSize() {
