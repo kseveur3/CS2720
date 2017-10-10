@@ -21,26 +21,136 @@ public class PhoneBook {
      */
     public static void main(String[] args) {
         
-        int usrInput1 = 0;
+        String usrInput1;
         String usrInput2;
+        String first;
+        String last;
+        String phone;
         boolean allRepeat = true;
         boolean repeat = true;
         Scanner in = new Scanner(System.in);
         String enteredFirst;
         String enteredLast;
         String enteredPhone;
+        int currentRecord = -1;
         LinkedList<PhoneEntry> list = new LinkedList<PhoneEntry>();
 
             while (allRepeat) {
 
             System.out.println("\nPlease make your selection: \n\n"
-                    + "1) Add a new phone book entry\n"
-                    + "2) Edit an existing name entry\n"
-                    + "3) Edit an existing number entry\n"
-                    + "4) Remove an existing entry\n"
-                    + "5) Print all contacts");
+                    + "a) Show all records\n"
+                    + "d) Delete the current record\n"
+                    + "f) Change the first name in the current record\n"
+                    + "l) Change the last name in the current record\n"
+                    + "n) Add a new record\n"
+                    + "p) Change the phone number in the current record\n"
+                    + "s) Select a record from the record list to become the"
+                    + " current record\n"
+                    + "q) Quit\n");
+            usrInput1 = in.next();
+            
+            switch(usrInput1) {
+                case "a": 
+                    for (PhoneEntry p: list) {
+                    System.out.printf("Name : %-20s PhoneNo :%1s\n\n",
+                            p.getName(), p.getPhone());
+                    }
+                    break;
+                
+                case "d": 
+                    if (currentRecord != -1) {
+                        list.remove(currentRecord);
+                    } else {
+                        System.out.println("You must set a current record "
+                                + "first!");
+                    }
+                    break;
+                    
+                case "f": 
+                    if (currentRecord != -1) {
+                        System.out.print("Enter new first name: ");
+                        first = in.next();
+                        PhoneEntry f = new PhoneEntry();
+                        f = list.get(currentRecord);
+                        f.setFirst(first);
+                    } else {
+                        System.out.println("You must set a current record "
+                                + "first!");
+                    }
+                    break;
+                    
+                case "l": 
+                    if (currentRecord != -1) {
+                        System.out.print("Enter new last name: ");
+                        last = in.next();
+                        PhoneEntry l = new PhoneEntry();
+                        l = list.get(currentRecord);
+                        l.setLast(last);
+                    } else {
+                        System.out.println("You must set a current record "
+                                + "first!");
+                    }
+                    break;
+                    
+                case "n": 
+                    System.out.println("Enter first name: ");
+                    first = in.next();
+                    System.out.println("Enter last name: ");
+                    last = in.next();
+                    System.out.println("Enter phone number: ");
+                    phone = in.next();
+                    if (phone.length() > 10) {
+                        System.out.println("You have entered an invalid format"
+                                + "phone number. Please use the format"
+                                + " ##########");
+                    } else {
+                    PhoneEntry n = new PhoneEntry(first, last, phone);
+                    list.add(n);
+                    currentRecord = list.indexOf(n);
+                    System.out.println("Current Record Location: " 
+                            +currentRecord);
+                    }
+                    break;
+                    
+                case "p": 
+                    System.out.print("Enter new phone number: ");
+                    phone = in.next();
+                    PhoneEntry p = new PhoneEntry();
+                    p = list.get(currentRecord);
+                    p.setPhone(phone);
+                    break;
+                    
+                case "s": 
+                    System.out.println("Enter first name: ");
+                    first = in.next();
+                    System.out.println("Enter last name: ");
+                    last = in.next();
+                    PhoneEntry s = new PhoneEntry();
+                    s.setFirst(first);
+                    s.setLast(last);
+                    int idx = -1;
+                    for (PhoneEntry px : list) {
+                        idx++;
+                        if(px.getFirst().equals(first) && px.getLast().
+                                equals(last)) {
+                            currentRecord = idx;
+                        } else {
+                            System.out.println("No matching record found.");
+                        }
+                    }
 
-            while (repeat) {
+                    System.out.println("Current Record Location: " 
+                            +currentRecord);
+                    break;
+                    
+                case "q": allRepeat = false; break;
+                
+                default : System.out.println("Illegal command!");
+                
+                    
+            }
+
+            /*while (repeat) {
                 while (!in.hasNextInt()) {
                     System.out.println("Please enter a value between 1 and 4: ");
                     in.next();
@@ -95,10 +205,24 @@ public class PhoneBook {
                 repeat = true;
             } else {
                 allRepeat = false;
-            }
+            }*/
         }
         in.close();
      
+    }
+    
+    public void displayList(LinkedList<PhoneEntry> l) {
+        int idx = 0;
+        int max = 1;
+        
+        for (idx = 0; idx < l.size(); idx++) {
+           if ((l.get(idx).getLast()).compareTo(l.get(max).getLast()) == 1) {
+               
+            
+        }
+            
+            
+        }
     }
     
 }
