@@ -5,21 +5,26 @@
  */
 package phonebook;
 
+import java.util.LinkedList;
+
 /**
  *
  * @author kevinseveur
  */
-public class PhoneEntry implements Comparable<PhoneEntry> {
+public class PhoneEntry {
 
-    private String name;
+    private String fname;
+    private String lname;
     private String phone;
+    private int entry;
     
     /**
      * Precondition - 
      * Postcondition - 
      */
     public PhoneEntry() {
-        name = null;
+        fname = null;
+        lname = null;
         phone = null;
     }
 
@@ -27,8 +32,9 @@ public class PhoneEntry implements Comparable<PhoneEntry> {
      * Precondition - 
      * Postcondition - 
      */
-    public PhoneEntry(String name2, String phoneNumber) {
-        name = name2;
+    public PhoneEntry(String first, String last, String phoneNumber) {
+        fname = first;
+        lname = last;
         phone = phoneNumber;
     }
 
@@ -37,15 +43,27 @@ public class PhoneEntry implements Comparable<PhoneEntry> {
      * Postcondition - 
      */
     public String getName() {
-        return name;
+        return fname + " " + lname;
+    }
+    
+    public String getFirst() {
+        return fname;
+    }
+    
+    public String getLast() {
+        return lname;
     }
 
     /**
      * Precondition - 
      * Postcondition - 
      */
-    public void setName( String newName) {
-        name = newName;
+    public void setFirst(String first) {
+        fname = first;  
+    }
+    
+    public void setLast( String last) {
+        lname = last;
     }
 
     /**
@@ -53,8 +71,20 @@ public class PhoneEntry implements Comparable<PhoneEntry> {
      * Postcondition - 
      */
     public String getPhone() {
-        return phone.substring(0,0) + "(" + phone.substring(0,3) + ")" +
-                phone.substring(3,phone.length());
+        return phone.substring(0,3) + "-" + phone.substring(3,6) + "-" +
+                phone.substring(6,phone.length());
+    }
+    
+    public int getElement(LinkedList<PhoneEntry> list, String first, String last) {
+       int idx = -1;
+       
+        for (PhoneEntry p : list) {
+            idx++;
+            if(p.fname.equals(first) && p.lname.equals(last)) {
+                return idx;
+            } 
+        }
+        return -1;
     }
 
     /**
@@ -69,12 +99,16 @@ public class PhoneEntry implements Comparable<PhoneEntry> {
      * Precondition - 
      * Postcondition - 
      */
-    public void display() {
-        System.out.println("Name : " + name + " PhoneNo : " + phone);
+    public void display(LinkedList<PhoneEntry> list) {
+        for (PhoneEntry p: list) {
+                    System.out.printf("Name : %-20s PhoneNo :%1s\n\n",
+                            p.getName(), p.getPhone());
+        } 
     }
+
     
     
-    @Override
+    /*@Override
 	public int compareTo(PhoneEntry o) {
             if (this.name.compareTo(o.name) != 0) {
                 return this.name.compareTo(o.name);
@@ -88,5 +122,5 @@ public class PhoneEntry implements Comparable<PhoneEntry> {
 		} else {
 			return -1;
 		}
-        }
+        }*/
 }
