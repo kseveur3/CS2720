@@ -1,0 +1,40 @@
+/**
+ * 1) Program Purpose
+ * 2) Solution and Algorithms
+ * 3) Data Structures
+ * 4) Program description and input/output
+ * 5) Class Purpose
+ *
+ * @author kevin Seveur
+ * Date
+ */
+
+
+public class Node {
+
+    protected Object data;
+    protected Node next;
+
+
+    public Node(Object x) {
+        data = x;
+        next = null;
+    }
+
+    public Node(Object x, Node nextNode) {
+        data = x;
+        next = nextNode;
+    }
+  /*  public Object getData() {
+
+    }
+
+    public void setData() {
+
+    }
+    public Node getNext() {
+
+    }
+    */
+}
+
