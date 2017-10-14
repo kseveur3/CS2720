@@ -3,17 +3,17 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package phonebook;
+package phonedir;
 
 import java.util.LinkedList;
 import java.util.Scanner;
-import java.util.Collections;
+
 
 /**
  *
  * @author kevinseveur
  */
-public class PhoneBook {
+public class phonedir {
     
 
     /**
