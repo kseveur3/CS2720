@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package phonedir;
+
 
 import java.util.LinkedList;
 import java.util.Scanner;
@@ -14,13 +14,13 @@ import java.util.Scanner;
  * @author kevinseveur
  */
 public class phonedir {
-    
+
 
     /**
      * @param args the command line arguments
      */
     public static void main(String[] args) {
-        
+
         String usrInput1;
         String usrInput2;
         String first;
@@ -35,7 +35,7 @@ public class phonedir {
         int currentRecord = -1;
         LinkedList<PhoneEntry> list = new LinkedList<PhoneEntry>();
 
-            while (allRepeat) {
+        while (allRepeat) {
 
             System.out.println("\nPlease make your selection: \n\n"
                     + "a) Show all records\n"
@@ -48,25 +48,21 @@ public class phonedir {
                     + " current record\n"
                     + "q) Quit\n");
             usrInput1 = in.next();
-            
-            switch(usrInput1) {
-                case "a": 
-                    for (PhoneEntry p: list) {
-                    System.out.printf("Name : %-20s PhoneNo :%1s\n\n",
-                            p.getName(), p.getPhone());
-                    }
+
+            switch (usrInput1) {
+                case "a":
+                    printList(list);
                     break;
-                
-                case "d": 
+
+                case "d":
                     if (currentRecord != -1) {
                         list.remove(currentRecord);
                     } else {
                         System.out.println("You must set a current record "
                                 + "first!");
-                    }
-                    break;
-                    
-                case "f": 
+                    }                    break;
+
+                case "f":
                     if (currentRecord != -1) {
                         System.out.print("Enter new first name: ");
                         first = in.next();
@@ -78,8 +74,8 @@ public class phonedir {
                                 + "first!");
                     }
                     break;
-                    
-                case "l": 
+
+                case "l":
                     if (currentRecord != -1) {
                         System.out.print("Enter new last name: ");
                         last = in.next();
@@ -91,36 +87,50 @@ public class phonedir {
                                 + "first!");
                     }
                     break;
-                    
-                case "n": 
+
+                case "n":
                     System.out.println("Enter first name: ");
                     first = in.next();
                     System.out.println("Enter last name: ");
                     last = in.next();
                     System.out.println("Enter phone number: ");
                     phone = in.next();
+                    int phoneTest = phoneNumberCheck(list, phone);
+                    if (phoneTest == -1) {
+                        break;
+                    }
                     if (phone.length() > 10) {
                         System.out.println("You have entered an invalid format"
                                 + "phone number. Please use the format"
                                 + " ##########");
                     } else {
-                    PhoneEntry n = new PhoneEntry(first, last, phone);
-                    list.add(n);
-                    currentRecord = list.indexOf(n);
-                    System.out.println("Current Record Location: " 
-                            +currentRecord);
+                        PhoneEntry n = new PhoneEntry(first, last, phone);
+                        int loc = locationFind(list, n);
+                        System.out.println("Location: " + loc);
+                        if (loc == -1) {
+                            System.out.println("ERROR: The specified phone number is already in the phone directory!");
+                            break;
+                        }
+                        list.add(loc, n);
+                        currentRecord = list.indexOf(n);
+                        //System.out.println("Current Record Location: "
+                        //        + currentRecord);
                     }
                     break;
-                    
-                case "p": 
+
+                case "p":
                     System.out.print("Enter new phone number: ");
                     phone = in.next();
+                    int phoneTest2 = phoneNumberCheck(list, phone);
+                    if (phoneTest2 == -1) {
+                        break;
+                    }
                     PhoneEntry p = new PhoneEntry();
                     p = list.get(currentRecord);
                     p.setPhone(phone);
                     break;
-                    
-                case "s": 
+
+                case "s":
                     System.out.println("Enter first name: ");
                     first = in.next();
                     System.out.println("Enter last name: ");
@@ -131,98 +141,82 @@ public class phonedir {
                     int idx = -1;
                     for (PhoneEntry px : list) {
                         idx++;
-                        if(px.getFirst().equals(first) && px.getLast().
+                        if (px.getFirst().equals(first) && px.getLast().
                                 equals(last)) {
                             currentRecord = idx;
-                        } else {
-                            System.out.println("No matching record found.");
                         }
                     }
-
-                    System.out.println("Current Record Location: " 
-                            +currentRecord);
-                    break;
-                    
-                case "q": allRepeat = false; break;
-                
-                default : System.out.println("Illegal command!");
-                
-                    
-            }
-
-            /*while (repeat) {
-                while (!in.hasNextInt()) {
-                    System.out.println("Please enter a value between 1 and 4: ");
-                    in.next();
-                }
-                repeat = false;
-                usrInput1 = in.nextInt();
-
-                if (usrInput1 > 5 || usrInput1 < 1) {
-                    System.out.println("Please enter a value between 1 and 4: ");
-                    repeat = true;
+                    if (idx == -1) {
+                        System.out.println("No matching record found.");
                     }
-            }
-            if (usrInput1 == 1) {
-                System.out.println("Please add the contacts full name: ");
-                enteredFirst = in.next();
-                enteredLast = in.next();
-                System.out.println("Please add the contacts phone number "
-                        + "without dashes: ");
-                while (!in.hasNextInt()) {
-                    System.out.println("Please enter numbers only: ");
-                    in.next();
-                }
-                enteredPhone = in.next();
-                list.add(new PhoneEntry(enteredFirst + " " + enteredLast
-                        , enteredPhone)); 
-                Collections.sort(list);
+                    //System.out.println("Current Record Location: "
+                    //        + currentRecord);
+                    break;
 
-            } else if (usrInput1 == 2) {
+                case "q":
+                    allRepeat = false;
+                    break;
 
-            } else if (usrInput1 == 3) {
+                default:
+                    System.out.println("Illegal command!");
 
-            } else if (usrInput1 == 4) {
-                
-            } else {
-                for (PhoneEntry p: list) {
-                    System.out.printf("Name : %-20s PhoneNo :%1s\n\n",p.getName(),
-                            p.getPhone());
-                }
 
             }
-            
-            System.out.println("Would you like to repeat the program"
-                    + " (yes or no)?");
-            usrInput2 = in.next();
-
-            while (!usrInput2.equals("yes") && !usrInput2.equals("no")) {
-                System.out.println("Please enter \"yes\" or \"no\"");
-                usrInput2 = in.next();
-            }
-            if (usrInput2.equals("yes")) {
-                allRepeat = true;
-                repeat = true;
-            } else {
-                allRepeat = false;
-            }*/
         }
         in.close();
-     
+
     }
-    
-    public void displayList(LinkedList<PhoneEntry> l) {
-        int idx = 0;
-        int max = 1;
-        
-        for (idx = 0; idx < l.size(); idx++) {
-           if ((l.get(idx).getLast()).compareTo(l.get(max).getLast()) == 1) {
-               
-            
+
+    public static int locationFind(LinkedList<PhoneEntry> l, PhoneEntry p) {
+        if (l.size() == 0) {
+            return 0;
+        } else {
+
+            for (int idx = 0; idx < l.size(); idx++) {
+                if (l.get(idx) == null) {
+                    return idx--;
+                } else if ((p.getLast()).compareTo(l.get(idx).getLast()) == 0) {
+                    if ((p.getFirst()).compareTo(l.get(idx).getFirst()) == 0) {
+                        if ((p.getPhone()).compareTo(l.get(idx).getPhone()) == 0) {
+                            return -1;
+                        } else if ((p.getPhone()).compareTo(l.get(idx).getPhone()) > 0) {
+                            continue;
+
+                        } else {
+                            return idx--;
+                        }
+
+                    } else if ((p.getFirst()).compareTo(l.get(idx).getFirst()) > 0) {
+                        continue;
+
+                    } else {
+                        return idx--;
+                    }
+                } else if ((p.getLast()).compareTo(l.get(idx).getLast()) > 0) {
+                    continue;
+                } else {
+                    return idx--;
+                }
+            }
         }
-            
-            
+        return l.size();
+    }
+
+    public static int phoneNumberCheck(LinkedList<PhoneEntry> l, String p) {
+        int flag = 1;
+        for (PhoneEntry temp: l) {
+            if (p.compareTo(temp.getPhoneNoFormat()) == 0) {
+                System.out.println("The phone number entered is already in the direcory");
+                flag = -1;
+            }
+        }
+        return flag;
+    }
+
+    public static void printList(LinkedList<PhoneEntry> li) {
+        for (PhoneEntry p : li) {
+            System.out.printf("Name : %-20s PhoneNo :%1s\n\n",
+                    p.getName(), p.getPhone());
         }
     }
-    
 }
