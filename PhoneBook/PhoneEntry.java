@@ -17,20 +17,20 @@ public class PhoneEntry {
     private String lname;
     private String phone;
     private int entry;
-
+    
     /**
-     * Precondition -
-     * Postcondition -
+     * Precondition - None.
+     * Postcondition - node created with null values.
      */
-    public PhoneEntry() {
+     public PhoneEntry() {
         fname = null;
         lname = null;
         phone = null;
     }
 
     /**
-     * Precondition -
-     * Postcondition -
+     * Precondition - None.
+     * Postcondition - node with values et to input params.
      */
     public PhoneEntry(String first, String last, String phoneNumber) {
         setFirst(first);
@@ -39,68 +39,74 @@ public class PhoneEntry {
     }
 
     /**
-     * Precondition -
-     * Postcondition -
+     * Precondition - Node already created.
+     * Postcondition - Returns the value of full name; first and last.
      */
     public String getName() {
         return fname + " " + lname;
     }
 
+    /**
+     * Precondition - Node already created.
+     * Postcondition - Returns the value of fist name.
+     */
     public String getFirst() {
         return fname;
     }
 
+    /**
+     * Precondition - Node already created.
+     * Postcondition - Returns the value of last name.
+     */    
     public String getLast() {
         return lname;
     }
 
     /**
-     * Precondition -
-     * Postcondition -
+     * Precondition - Node already created.
+     * Postcondition - Changes or sets the first name value.
      */
     public void setFirst(String first) {
         String f = first.toLowerCase();
         Character fi = Character.toUpperCase(f.charAt(0));
-        fname = fi + f.substring(1,f.length());
-    }
-
-    public void setLast( String last) {
-        String l = last.toLowerCase();
-        Character lo = Character.toUpperCase(l.charAt(0));
-        lname = lo + l.substring(1,l.length());
+        fname = fi + f.substring(1, f.length());
     }
 
     /**
-     * Precondition -
-     * Postcondition -
+     * Precondition - Node already created.
+     * Postcondition - Changes or sets the last name value.
      */
-    public String getPhone() {
-        return phone.substring(0,3) + "-" + phone.substring(3,6) + "-" +
-                phone.substring(6,phone.length());
+    public void setLast( String last) {
+        String l = last.toLowerCase();
+        Character lo = Character.toUpperCase(l.charAt(0));
+        lname = lo + l.substring(1, l.length());
     }
 
+    /**
+     * Precondition - Node already created.
+     * Postcondition - Retrieves the phone number value.
+     */
+    public String getPhone() {
+        return phone.substring(0, 3) + "-" + phone.substring(3, 6) + "-" +
+                phone.substring(6, phone.length());
+    }
+
+    /**
+     * Precondition - Node already created.
+     * Postcondition - Retrieves the phone number but doesn't add dashes 
+     * to value.
+     */
     public String getPhoneNoFormat() {
         return phone;
     }
 
-    public int getElement(LinkedList<PhoneEntry> list, String first, String last) {
-        int idx = -1;
-
-        for (PhoneEntry p : list) {
-            idx++;
-            if(p.fname.equals(first) && p.lname.equals(last)) {
-                return idx;
-            }
-        }
-        return -1;
-    }
-
     /**
-     * Precondition -
-     * Postcondition -
+     * Precondition - Node already created.
+     * Postcondition - Changes or sets the phone value.
      */
     public void setPhone(String newPhone) {
         phone = newPhone;
     }
 
 }
+
