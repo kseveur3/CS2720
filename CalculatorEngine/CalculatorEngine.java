@@ -49,7 +49,9 @@ public class calc {
             
             System.out.println("Please enter an equation to solve!");
             equation = in.nextLine();
-            calculator(infixToPostfix(equation));
+            if (validator(equation) == 1) {
+            	infixToPostfix(equation);
+            //calculator(infixToPostfix(equation));
             //infixToPostfix("5*(10%3)+2*3*(6/2)");
             String postfix1 = "5 10 3 % 2 + 3 * 6 2 / * * ";
             String postfix2 = "5 X +";
@@ -63,6 +65,7 @@ public class calc {
             if ("No".equals(response)) {
                 repeat = false;
             }
+        }
         }
     }
     
@@ -265,4 +268,77 @@ public class calc {
        System.out.println("\nConverted expression: " + result);
        return result;
      }
+    
+	 public static int validator(String usrInput) {
+	    	String operators = "+ - * / %";
+	    	String operands = "1 2 3 4 5 6 7 8 9 0 x";
+	    	int lParens = 0;
+	    	int rParens = 0;
+	    	int check = 1;
+	    	String modInput = usrInput;
+	    	if (usrInput.contains("((")) {
+	    		modInput = modInput.replace("((","( (");
+	    	}
+	    	if (usrInput.contains("))") ) {
+	    		modInput = modInput.replace("))",") )");
+	    	}
+	    	String[] newString = modInput.split("\\s");
+	    	
+	    	 if (usrInput.contains(".")) {
+	    		 System.out.println("Error in expression!! Cannot accept floating point numbers.");
+	        	 check = -1;
+	    		 return check;
+	        	} 
+	    	
+	    	if (newString.length > 2) {
+		    	for (int i = 0; i < newString.length; i++) {
+		    		if (newString[i].length() > 1) {
+		    			System.out.println("Error in expression!! Please include spaces between each operand and each operator!");
+		    			check = -1;
+		    			return check;
+		    		}
+		    		if (newString[i].equals("(")) {
+		    			lParens++;
+		    		}
+		    		if (newString[i].equals(")")) {
+		    			rParens++;
+		    		}
+		    		System.out.println("Current: " + newString[i]);
+		    		//System.out.println("Next: " + newString[i+1]);
+		    		//System.out.println("T or F: " + usrInput.contains("."));
+	
+		    		if (((operators.indexOf(newString[i]) != -1) && (operators.indexOf(newString[i + 1]) != -1))) {
+		        		System.out.println("Error in expression!! The " +newString[i] + " operator cannot be preceded by a "
+		        				+ newString[i + 1] +" operator.");
+		        		check = -1;
+		        		return check;		
+		    		} else if ((operands.indexOf(newString[i]) != -1) && (operands.indexOf(newString[i+1]) != -1)
+		    				&& (operators.indexOf(newString[i+2]) != -1)) {
+		    			System.out.println("Error in expression!! No operator between operands. Also last token must be an operand.");
+		    			check = -1;
+		    			return check;
+		    		} else if (((operands.indexOf(newString[i]) != -1) && (newString[i + 1].equals("(")))) {
+		        		System.out.println("Error in expression!! No operator between operand and left parentheses.");
+		        		check = -1;
+		        		return check;
+		    	} 
+		    	
+	    	}
+		    	if (lParens < rParens) {
+		    		System.out.println("Error in expression!! No matching left parentheses for a right parentheses.");
+		    		check = -1;
+		    		return check;
+		    	} 
+		    	if (lParens > rParens) {
+		    		System.out.println("Error in expression!! No matching right parentheses for a left parentheses.");
+		    		check = -1;
+		    		return check;
+		    	}
+	    	}else {
+	    		System.out.println("Error in expression!! Your expression does not contain 2 operands and an operator!");
+	    		check = -1;
+	    	}
+		    
+	    	return check;
+	    }
 }
