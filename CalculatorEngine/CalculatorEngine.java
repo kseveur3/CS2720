@@ -31,7 +31,7 @@ import java.util.Scanner;
  *
  * @author kevinseveur
  */
-public class CalculatorEngine {
+public class calc {
     public static Stack<Integer> data = new Stack<Integer>();
 
     /**
@@ -41,24 +41,29 @@ public class CalculatorEngine {
         
         boolean repeat = true;
         Scanner in = new Scanner(System.in);
+        Scanner in2 = new Scanner(System.in);
         String equation;
         String response;
+
         while (repeat) {
+            
             System.out.println("Please enter an equation to solve!");
             equation = in.nextLine();
-            calculator(equation);
+            calculator(infixToPostfix(equation));
+            //infixToPostfix("5*(10%3)+2*3*(6/2)");
+            String postfix1 = "5 10 3 % 2 + 3 * 6 2 / * * ";
+            String postfix2 = "5 X +";
+            String postfix3 = "8 10 2 / +";
+           //calculator(postfix2);
+           //equation = null;
             
             System.out.println("Do you have another equation to solve? "
                     + "Yes or No?");
-            response = in.next();
-            if (response == "No") {
+            response = in2.next();
+            if ("No".equals(response)) {
                 repeat = false;
             }
         }
-        
-        
-
-        // Add Code Here
     }
     
     private static int currentMemory() { return data.peek(); }
@@ -66,7 +71,6 @@ public class CalculatorEngine {
     private static void pushOperand(int value) { data.push(value);} 
     
     private static void doOperator(String theOp) {
-        //String theOp = Operator.symbol(Op);
         int right = data.peek();
         data.pop();
         int left = data.peek();
@@ -94,24 +98,56 @@ public class CalculatorEngine {
     
     private static void calculator(String x)
      {
-       int intval;
-       CalculatorEngine calc = new CalculatorEngine();
-       char c;
-       int i = 0;
-      String input =" ";
-      while (i < x.length()) {
-         c = x.charAt(i);
+         boolean repeat = true;
+         
+         while (repeat){
+         int intval;
+         calc calc = new calc();
+         char c;
+         int i = 0;
+         int j = 0;
+         String input ="";
+         String varX = "";
+         boolean noX = true;
+         Scanner in = new Scanner(System.in); 
+         String z = x;
+         
+         if ( x.contains("X")) {
+             System.out.println("Please enter your value for \"x\" or "
+                     + "\"q\" to quit: ");
+             varX = in.next();   
+             z = x.replaceAll("X", varX); 
+         } else {
+             noX = false;
+         }
+         
+         varX = "";
+
+      while (i < z.length()) {
+         c = z.charAt(i);
          switch (c) {
+             
            case '0': case '1': case '2': case '3': case '4':
            case '5': case '6': case '7': case '8': case '9':
-          input +=c;
-           intval = Integer.parseInt(input);     
-           calc.pushOperand(intval);
-           break;
+               //preInput += c;
+               input += c;
+               //System.out.println("Input so far: " + input);
+               //intval = Integer.parseInt(input);     
+               //calc.pushOperand(intval);
+
+               break;
+               
+           case ' ': 
+               if (!input.equals("")) {
+               intval = Integer.parseInt(input);     
+               calc.pushOperand(intval);
+               input = "";
+               }
+               break;
 
            case '+':
-            calc.doOperator("plus");
-            break;
+               calc.doOperator("plus");
+               break;
 
            case '-':
             calc.doOperator("minus");
@@ -135,15 +171,98 @@ public class CalculatorEngine {
 
            case 'q': return;
          }
+         i++;
        }
+         if (!calc.data.empty()) {
+            System.out.println("Answer to expression: " + calc.currentMemory());
+            System.out.println();
+         while (!calc.data.empty()) {
+             calc.data.pop();
+         }
+         }
+         if (noX == false) {
+             repeat = false;     
+         }
+     }
      }
 
+    private static String opString(String theOp)
+     {
+         String operation = "";
+       switch (theOp) {
+         case "plus": operation = "+ "; break;
+         case "minus": operation = "- "; break;
+         case "multiply": operation = "* "; break;
+         case "divide": operation = "/ "; break;
+         case "modulo": operation = "% "; break;
+         
+       }
+       return operation;
+     }
     
+    private static String processOp(String theOp,
+                        Stack< String> opStack, String result) { 
+        
+       if ((!opStack.empty()) && ((Operator.order(theOp)) <= 
+               (Operator.order(opStack.peek())))) {
+         result += opString(opStack.peek());
+         opStack.pop();
+       }
+       opStack.push(theOp);
+       return result;
+     }
     
+    private static String infixToPostfix(String infixStr) {
+       Stack<String> opStack = new Stack<>();
+       String result = "";
+       int i = 0;
+       infixStr = infixStr.toUpperCase();
+
+       while (i < infixStr.length() ) {
+         if ((Character.isDigit(infixStr.charAt(i))) || (infixStr.charAt(i) == 'X')) {
+           while ((i < infixStr.length()) && 
+                   ((Character.isDigit(infixStr.charAt(i)))
+                   || (infixStr.charAt(i) == 'X'))) {
+              result += infixStr.charAt(i);
+              i++;
+           }
+           result += " ";
+         } else {
+           switch (infixStr.charAt(i)) {
+              case '(':
+                  opStack.push("leftparen");
+                  break;
+              case ')':
+                  while (opStack.peek().compareTo("leftparen") != 0) {
+                      result += opString(opStack.peek());
+                      opStack.pop();
+                  }
+                  opStack.pop();
+                  break;
+              case '+':
+                  result = processOp("plus", opStack, result);
+                  break;
+              case '-':
+                  result = processOp("minus", opStack, result);
+                  break;
+              case '*':
+                  result = processOp("multiply", opStack, result);
+                  break;
+              case '/':
+                  result = processOp("divide", opStack, result);
+                  break;
+              case '%':
+                  result = processOp("modulo", opStack, result);
+                  break;
+            }
+              i++;
+       }
+       }
+       while (!opStack.empty()) {
+         result += opString(opStack.peek());
+         opStack.pop();
+       }
+       System.out.println("\nConverted expression: " + result);
+       return result;
+     }
 }
-
-    
-
-    
-    
-
