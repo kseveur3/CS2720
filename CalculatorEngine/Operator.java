@@ -11,21 +11,15 @@ package calc;
 
 public class Operator {
 
-    final String plus = "+";
-    final String minus = "-";
-    final String divide = "/";
-    final String modulo = "%";
-    final String multiply = "*";
-
     /**
      * Postcondition - returns a value that represents the order of operations.
      * @param op
-     * @return An integer representation of the ordr o operations.
+     * @return An integer representation of the order o operations.
      */
     public static int order(String op) {
 
         int answer = -1;
-        switch(op) {
+        switch (op) {
             case "*": answer = 1; break;
             case "multiply": answer = 1; break;
             case "/": answer = 1; break;
@@ -46,7 +40,7 @@ public class Operator {
      * @return String that represents the operator entered.
      */
     public static String symbol(String symbol) {
-        switch(symbol) {
+        switch (symbol) {
             case "*": return "multiply";
             case "/": return "divide";
             case "%": return "modulo";
