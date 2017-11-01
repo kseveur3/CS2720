@@ -1,25 +1,29 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
+/**
+ * 1) The purpose of this class is to establish order of operations as well as
+ * to manage conversion from operator to text  equivalent of the operator.
+ *
+ * @author kevin Seveur
+ * 10/29/2017
  */
+
+
 package calc;
 
-/**
- *
- * @author kevinseveur
- */
 public class Operator {
-    
+
     final String plus = "+";
     final String minus = "-";
     final String divide = "/";
     final String modulo = "%";
     final String multiply = "*";
-    
-    
+
+    /**
+     * Postcondition - returns a value that represents the order of operations.
+     * @param op
+     * @return An integer representation of the ordr o operations.
+     */
     public static int order(String op) {
-        
+
         int answer = -1;
         switch(op) {
             case "*": answer = 1; break;
@@ -35,9 +39,12 @@ public class Operator {
             default: answer = 0;
         }
         return answer;
-        
     }
-    
+
+    /**
+     * @param symbol
+     * @return String that represents the operator entered.
+     */
     public static String symbol(String symbol) {
         switch(symbol) {
             case "*": return "multiply";
@@ -49,5 +56,5 @@ public class Operator {
         }
         return "";
     }
-    
+
 }
