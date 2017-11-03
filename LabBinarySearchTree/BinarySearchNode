@@ -14,10 +14,16 @@ public class BinarySearchNode {
     public int data;
     public BinarySearchNode left;
     public BinarySearchNode right;
+    public BinarySearchNode parent;
     
     public BinarySearchNode(int x) {
         data = x;
-        left = right = null;
+        left = right = parent = null;
     }
     
+      public BinarySearchNode(int x, BinarySearchNode p) {
+        data = x;
+        parent = p;
+        left = right = null;
+    }
 }
