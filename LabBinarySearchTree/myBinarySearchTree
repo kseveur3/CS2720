@@ -25,11 +25,10 @@ public class myBinarySearchTree {
     public static void main(String[] args) {
         myBinarySearchTree tree = new myBinarySearchTree();
         tree.root = new BinarySearchNode(20);
-        tree.root.left = new BinarySearchNode(15);
-        tree.root.right = new BinarySearchNode(25);
-        tree.root.left.left = new BinarySearchNode(10);
-        tree.root.left.right = new BinarySearchNode(17);
-
+        tree.root.left = new BinarySearchNode(15, tree.root);
+        tree.root.right = new BinarySearchNode(25, tree.root);
+        tree.root.left.left = new BinarySearchNode(10, tree.root.left);
+        tree.root.left.right = new BinarySearchNode(17, tree.root.left);
 }
 }
 
