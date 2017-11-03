@@ -1,0 +1,36 @@
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package myBinarySearchTree;
+
+/**
+ *
+ * @author kevinseveur
+ */
+public class myBinarySearchTree {
+    
+    public BinarySearchNode root;
+    
+    
+    public myBinarySearchTree(int x) {
+        root = new BinarySearchNode(x);
+    }
+    
+    public myBinarySearchTree() {
+        root = null;
+    } 
+    
+    public static void main(String[] args) {
+        myBinarySearchTree tree = new myBinarySearchTree();
+        tree.root = new BinarySearchNode(20);
+        tree.root.left = new BinarySearchNode(15);
+        tree.root.right = new BinarySearchNode(25);
+        tree.root.left.left = new BinarySearchNode(10);
+        tree.root.left.right = new BinarySearchNode(17);
+
+}
+}
+
+
