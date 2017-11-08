@@ -6,10 +6,6 @@
 package bank;
 import java.lang.*;
 
-/**
- *
- * @author kevinseveur
- */
 public class Customer {
     
     protected int arrivalTime;
@@ -31,6 +27,9 @@ public class Customer {
     
     public int arrival() {
         return arrivalTime;
+    }
+    public int getProcessTime() {
+    	return processTime;
     }
     
 }
