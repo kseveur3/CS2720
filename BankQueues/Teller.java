@@ -12,6 +12,8 @@ package bank;
 public class Teller {
     protected boolean free;
     protected Customer customer;
+    protected int customerCount = 0;
+    protected int customerTime = 0;
     
     
     public Teller() {
@@ -20,7 +22,7 @@ public class Teller {
     
     public Teller(int time) {
         Customer cust = new Customer(time);
-        addCustomer(cust);
+        addCustomer(cust, cust.getProcessTime());
     }
     
     
@@ -34,8 +36,20 @@ public class Teller {
         return free;
     }
     
-    public void addCustomer(Customer c) {
+    public void addCustomer(Customer c, int t) {
         customer = c;
         free = false;
+        customerCount += 1;
+        customerTime += t;
+        
+        
     }  
+    
+    public int timeTotal() {
+    	return customerTime;
+    }
+
+    public int getCustomerCount() {
+    	return customerCount;
+    }
 }
