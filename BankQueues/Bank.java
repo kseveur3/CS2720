@@ -1,103 +1,127 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
+package bank;
 
-
-import java.sql.Timestamp;
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 
+
+/**
+ * 1) Program Purpose
+ *      This program mimics the operation of a bank with tellers and customers.
+ * 2) Solution and Algorithms
+ *      My solution involved using a Queue for the Customers, and an Array for
+ *      the Tellers. As a teller becomes free, the next customer at the front
+ *      of the queue is dequeued and sent to the teller. As tellers become
+ *      available, we continue to dequeue customers and send them to tellers for
+ *      a time span of 2 minutes.
+ * 3) Data Structures
+ *      The data structures used were a Queue and an ArrayList.
+ * 4) Program description and input/output
+ *      This program creates random times for the customer to "enter the bank",
+ *      and another random number to signify the time the customer needs to 
+ *      spend with the Teller, (processTime). As the Customer goes to see the 
+ *      Teller, the process time is added to that Tellers total customer time. 
+ * 5) Class Purpose
+ *      The Bank class hold the main program. 
+ *
+ * @author Kevin Seveur
+ * Data Structures
+ * 11/11/2017
+ */
 public class Bank {
 
-    /**
-     * @param args the command line arguments
-     */
-    public static void main(String[] args) {
-        
-       int numberOfTellers = 5;
-       int numberOfMinutes = 60;
-       double totalWait = 0;
-       int numberOfCustomers = 0;
+    static int totalWait = 0;
+    static int numberOfCustomers = 0;
+    static int numberOfTellers = 5;
+    static int time = 0;
+    static String usrInput;
+    static String loopCheck = "*";
+
+    public static void main(String[] args) throws InterruptedException {
+
        Scanner in = new Scanner(System.in);
        boolean repeat = true;
-       String usrInput;
-       
-       
-       Teller[] teller = new Teller[numberOfTellers];
-       Queue<Customer> line = new LinkedList<Customer>(); 
-       
-       
+
        while (repeat) {
-           Timestamp timestamp1 = new Timestamp(System.currentTimeMillis());
-           long millis1 = timestamp1.getTime();
-            for (int i = 0; i < teller.length; i++) {
-                teller[i] = new Teller(0);           
-            }
-            
-            int k = 5;
-            while (k > 0) {  //Initialize the Customer queue with 5 customers
-                Customer newCustomer = new Customer(Bank.randomizer(6));
-                line.add(newCustomer);
-                numberOfCustomers++;
-                k--;
-            }
+           banksim();
+           TimeUnit.SECONDS.sleep(130);
+           System.out.print("\nWould you like to run the simulator again? "
+                      + "Yes or No? ");
+           usrInput = in.next();
+           usrInput = usrInput.toLowerCase();
+           if (usrInput.equals("no")) {
+               repeat = false;
+           }
+       }
+    }
 
-            System.out.println("Initial number of customers " + numberOfCustomers);
+    public static void banksim() {
 
-            double time = 0;
+       Teller[] teller = new Teller[numberOfTellers];
+       Queue<Customer> line = new LinkedList<Customer>();
 
-            while (time <= 5000) { //Should be 120000
-                Timestamp timestamp2 = new Timestamp(System.currentTimeMillis());
-                long millis2 = timestamp2.getTime();
-                time = millis2 - millis1;
-                
-                if ((time * 1000) == 0) {
-                   
-                }
-                    
+        for (int i = 0; i < teller.length; i++) {
+               teller[i] = new Teller(0);
+           }
+        
+        //Initialize the Customer queue with 5 customers
+        int k = 5;
+        while (k > 0) {
+            Customer initialCustomer = new Customer(Bank.randomizer(6));
+            teller[k - 1].addCustomer(initialCustomer);
+            numberOfCustomers++;
+            k--;
+           }
+        System.out.print("Bank Simulator running ");
+        final Timer timer = new Timer();
+        timer.schedule(new TimerTask() {
+            public void run() {
                 Customer newCustomer = new Customer(randomizer(6));
                 line.add(newCustomer);
-                System.out.println(teller[0].getCustomerCount());
-                System.out.println(teller[1].getCustomerCount());
-                System.out.println(teller[2].getCustomerCount());
-                System.out.println(teller[3].getCustomerCount());
-                System.out.println(teller[4].getCustomerCount());
-               
+                System.out.print(loopCheck);
+
                 for (int i = 0; i < numberOfTellers; i++) {
-                        if (!line.isEmpty() && teller[i].isFree()) {
-                        Customer frontCustomer = line.peek();
-                        numberOfCustomers++;
-                        System.out.println("Time: " + (time / 1000));
-                        System.out.println("Arrival time: " + frontCustomer.arrival());
-                        System.out.println("Total Wait: " + ((time/1000) - frontCustomer.arrival()));
-                        System.out.println("-------------------------------------");
-                        totalWait += ((time / 1000) - frontCustomer.arrival());
-                        teller[i].addCustomer(frontCustomer, frontCustomer.getProcessTime());
-                        System.out.println("Customer Process Time = "+frontCustomer.getProcessTime());
-                        line.remove();
-                        }    
+                    if (!line.isEmpty() && teller[i].isFree(time)) {
+                    Customer frontCustomer = line.peek();
+                    numberOfCustomers++;
+                    totalWait += (time - frontCustomer.arrival());
+                    teller[i].addCustomer(frontCustomer);
+                    frontCustomer.initialTellerTime = time;
+                    line.remove();
+                    }
                 }
+                if (time == 120) {
+                    timer.cancel();
+                    System.out.println("\n1) ");
+                    System.out.println("  The total amount of customers that"
+                            + " visited the bank: " + numberOfCustomers);
+                    int idx = 1;
+                    System.out.println("2) ");
+                    for (Teller x: teller) {
+                        System.out.println("  Teller " + idx + " saw "
+                                + x.getCustomerCount() + " customers for a total"
+                                + " of " + x.timeTotal() + " seconds");
+                    idx++;
+                    }
+                    System.out.println("3) ");
+                    System.out.printf(" Average wait: %.4s seconds",
+                            (totalWait / numberOfCustomers));
+                    System.out.println("\n4) ");
+                    System.out.println("  Total number of customers that did"
+                            + " not get to see a teller: " + line.size());
+                    System.out.println("5) ");
+                    System.out.println("  Total running time is: "
+                            + time/60 + " minutes");
+                    totalWait = 0;
+                    numberOfCustomers = 0;
+                    time = 0;
+                }
+                time++;
             }
-            System.out.printf("Average wait: %.4f ", (totalWait / numberOfCustomers));
-            System.out.println("\nThe total amount of customers that visited the bank: " + numberOfCustomers);
-            int idx = 1;
-            for (Teller x: teller) {
-            	System.out.println("Teller " + idx + " saw " + x.getCustomerCount() + " customers for a total"
-            			+ " of " + x.timeTotal() + " minutes");
-            	idx++;
-            }
-            System.out.println("Total number of customers that did not get to see a teller " + line.size());
-            System.out.printf("\nTotal running time: %.2f seconds", (time/1000));
-            System.out.print("\nWould you like to run the simulator again? "
-                      + "Yes or No? ");
-              
-              usrInput = in.next();
+            }, 0, 1000);
+    }
 
-              usrInput = usrInput.toLowerCase();
-              if(usrInput.equals("no")) {
-                  repeat = false;
-              }
-
-            }
-                  }
+    private static int randomizer(int time) {  
+        int response = 2 + (int) (Math.random() * time + 1);
+        return response;
+    }
+}
