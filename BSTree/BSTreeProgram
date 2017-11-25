@@ -1,0 +1,75 @@
+/**
+ * 1) Program Purpose
+ *      This program is a Binary Search Tree. It organized integer values in a
+ *      tree structure for rapid access of O(Log(n)).
+ * 2) Solution and Algorithms
+ *      My solution makes use of recursive algorithms to complete the tasks
+ *      pertaining to traversing the tree.
+ * 3) Data Structures
+ *      The Queue and the LinkedList where the two data structures used to
+ *      complete this program.
+ * 4) Program description and input/output
+ *      This program is a data organizer utilizing the Binary Search Tree data
+ *      structure. There is no user input. Instead, we generate 100 random
+ *      integers that the program will then add to the tree based on
+ *      a specific placement algorithm. The output of the program is the
+ *      on-screen inOrder display of the 100 integer values.
+ * 5) Class Purpose
+ *      This class is the main program for the BSTree program.
+ *
+ * @author kevin Seveur
+ * 11/25/2017
+ */
+package bstree;
+
+import java.util.*;
+
+/**
+ *
+ * @author kevinseveur
+ */
+public class BSTreeProgram {
+
+    protected static Queue<Integer> myQueue = new LinkedList<>();
+    protected static final int NUMBEROFNODES = 100;
+
+    public static void main(String[] args) {
+        randomizer();
+        printQueue();
+        BSTree tree = new BSTree(myQueue.remove());
+
+        while (!myQueue.isEmpty()) {
+            tree.createTree(myQueue.remove());
+        }
+        tree.printTree();
+    }
+
+    /**
+     * Precondition - None.
+     * Postcondition - Creates random integer values and adds them to the queue.
+     */
+    private static void randomizer() {
+        for (int i = 0; i < NUMBEROFNODES; i++) {
+            int number = 1 + (int) (Math.random() * 99 + 1);
+            myQueue.add(number);
+        }
+    }
+
+    /**
+     * Precondition - myQueue has values in it.
+     * Postcondition - prints the values in the queue to the screen.
+     */
+    private static void printQueue() {
+        int i = 0;
+        System.out.println("The random integer values are:");
+        for(int s : myQueue) { 
+            System.out.print(Integer.toString(s)+" ");
+            i++;
+            if (((i % 25) == 0) && (i != 0)) {
+                System.out.println();
+            }
+        }
+        System.out.println("\nThere are " + myQueue.size()
+                + " values in queue.");
+    }
+}
