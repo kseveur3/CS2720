@@ -1,0 +1,29 @@
+/**
+ * Class Purpose
+ *      This class forms the Nodes for the BSTree program.
+ */
+
+package bstree;
+
+
+public class myNode {
+
+    protected int value;
+    protected myNode left;
+    protected myNode right;
+    protected myNode parent;
+
+    public myNode(int v) {
+        value = v;
+        left = null;
+        right = null;
+        parent = null;
+    }
+
+    public myNode(int v, myNode lc, myNode rc, myNode pa) {
+        value = v;
+        left = lc;
+        right = rc;
+        parent = pa;
+    }
+}
