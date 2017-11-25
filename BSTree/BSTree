@@ -1,0 +1,104 @@
+/**
+ * Class Purpose
+ *      This class forms the Binary Search Tree for the BSTree program.
+ */
+
+package bstree;
+
+
+
+public class BSTree {
+
+    protected myNode root;
+    private int size;
+
+    public BSTree(int x) {
+        root = new myNode(x);
+        size++;
+    }
+
+    /**
+     * Precondition - None.
+     * Postcondition - returns true if the tree has no values.
+     * @return
+     */
+    public boolean isEmpty() {
+        return root == null;
+    }
+
+    /**
+     * Precondition - None.
+     * Postcondition - returns the current size of the tree.
+     * @return 
+     */
+    public int getSize() {
+        return size;
+    }
+
+    /**
+     * Precondition - Tree is initialized with a root node.
+     * Postcondition - Adds the new valued node to the tree.
+     * @param data 
+     */
+    public void createTree(int data) {
+        if (root == null) {
+            root.value = data;
+            size++;
+        } else {
+            createTreeHelper(root, root, data);
+        }
+    }
+
+    /**
+     * Precondition - Helper function to add new node to tree.
+     * Postcondition - Adds the new valued node to the tree.
+     * @param current
+     * @param last
+     * @param data 
+     */
+    private void createTreeHelper(myNode current, myNode last, int data) {
+        if (current == null) {
+            myNode newNode = new myNode(data);
+            if (data < last.value) {
+                last.left = newNode;
+                size++;
+            } else {
+                last.right = newNode;
+                size++;
+            }
+        } else if (data < current.value) {
+            createTreeHelper(current.left, current, data);
+        } else {
+            createTreeHelper(current.right, current, data);
+        }
+    }
+
+    /**
+     * Precondition - None.
+     * Postcondition - Prints the inOrder values of the tree to screen.
+     */
+    public void printTree() {
+        if (root != null) {
+            System.out.print("\nThe resulting in-order traversal is \n[ ");
+            inOrderPrint(root);
+            System.out.println("]\n");
+            System.out.println("The total number of nodes in the tree is: "
+                    + size);
+        } else {
+            System.out.println("The tree has no values!");
+        }
+    }
+
+    /**
+     * Precondition - Helper class for printTree.
+     * Postcondition - Prints tree values to screen.
+     * @param current
+     */
+    private void inOrderPrint(myNode current) {
+        if (current != null) {
+            inOrderPrint(current.left);
+            System.out.print(current.value + " ");
+            inOrderPrint(current.right);
+        }
+    }
+}
