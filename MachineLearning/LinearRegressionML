@@ -1,8 +1,8 @@
 
 
+import java.io.*;
 import java.util.*;
-import java.io.FileReader;
-import java.io.BufferedReader;
+
 import Jama.Matrix;
 import java.util.Scanner;
 
@@ -27,11 +27,13 @@ public class LinearRegressionML {
     public Matrix testingLabelMatrix;
     public int rowLimiter;
     public Double lambda;
+    public Matrix dataSetWeights;
 
-    public LinearRegressionML(String originalData, String originalLabels) {
+    public LinearRegressionML(String originalData, String originalLabels, String testData) {
         lambda = 1.0;
         dataFile = originalData;
         labelFile = originalLabels;
+        testingFile = testData;
 
     }
 
@@ -40,63 +42,62 @@ public class LinearRegressionML {
      * The division is 80 / 20 percent for training to testing data
      */
 
-    public void dataDivider() {
-        //int colCount[] = null;
-
-
+    public List<double[]> readData(String dataToRead) {
+        List<double[]> dataArray = new ArrayList<double[]>();
         try {
-            BufferedReader reader = new BufferedReader(new FileReader(dataFile));
-            List<double[]> dataArray = new ArrayList<double[]>();
+            BufferedReader reader = new BufferedReader(new FileReader(dataToRead));
+
             String line;
             while ((line = reader.readLine()) != null) {
                 line = line.trim();
+                line = line.replaceAll(",", " ");
                 line = line.replaceAll("\\s+", ",");
                 String fields[] = line.split(",");
+
                 double data[] = new double[fields.length];
                 //colCount = new int[fields.length];
                 for (int i = 0; i < fields.length; ++i) {
                     if (!fields[i].contains(" ")) {
                         data[i] = Double.valueOf(fields[i]);
                     }
-
                 }
                 dataArray.add(data);
-
             }
-
-            if (dataArray.size() > 0) {
-                int cols = dataArray.get(0).length;
-                int rows = dataArray.size();
-                rowLimiter = (int) (rows * .8);
-
-                System.out.println("Row Limiter: " + rowLimiter);
-                System.out.println("Rows: " + rows + " Columns: " + cols);
-
-                trainingMartrix = new Matrix(rowLimiter, cols);
-                testingMatrix = new Matrix(rows - rowLimiter, cols);
-
-                for (int r = 0; r < rows; r++) {
-                    if (r < rowLimiter) {
-                        for (int c = 0; c < cols; c++) {
-                            trainingMartrix.set(r, c, dataArray.get(r)[c]);
-                        }
-                    } else {
-                        for (int c = 0; c < cols; c++) {
-                            testingMatrix.set((r - rowLimiter), c, dataArray.get(r)[c]);
-                        }
-                    }
-                }
-                trainingMartrix = impute(trainingMartrix);
-                testingMatrix = impute(testingMatrix);
-            }
-
-            System.out.println("Training Matrix size: " + trainingMartrix.getRowDimension() + " X " + trainingMartrix.getColumnDimension());
-            System.out.println("Testing Matrix size: " + testingMatrix.getRowDimension() + " X " + testingMatrix.getColumnDimension());
-
         } catch (Exception e) {
             e.printStackTrace();
             System.exit(1);
         }
+        return dataArray;
+    }
+
+    private void dataDivider(List<double[]> dataArray) {
+        if (dataArray.size() > 0) {
+            int cols = dataArray.get(0).length;
+            int rows = dataArray.size();
+            rowLimiter = (int) (rows * .8);
+
+            System.out.println("Rows: " + rows + " Columns: " + cols);
+
+            trainingMartrix = new Matrix(rowLimiter, cols);
+            testingMatrix = new Matrix(rows - rowLimiter, cols);
+
+            for (int r = 0; r < rows; r++) {
+                if (r < rowLimiter) {
+                    for (int c = 0; c < cols; c++) {
+                        trainingMartrix.set(r, c, dataArray.get(r)[c]);
+                    }
+                } else {
+                    for (int c = 0; c < cols; c++) {
+                        testingMatrix.set((r - rowLimiter), c, dataArray.get(r)[c]);
+                    }
+                }
+            }
+            //trainingMartrix = impute(trainingMartrix);
+            //testingMatrix = impute(testingMatrix);
+        }
+
+        System.out.println("Training Matrix size: " + trainingMartrix.getRowDimension() + " X " + trainingMartrix.getColumnDimension());
+        System.out.println("Testing Matrix size: " + testingMatrix.getRowDimension() + " X " + testingMatrix.getColumnDimension());
     }
 
     private Matrix impute(Matrix m) {
@@ -171,7 +172,7 @@ public class LinearRegressionML {
             int cols = dataArray.get(0).length;
             int rows = dataArray.size();
 
-            System.out.println("Rows: " + rows + " Columns: " + cols);
+            System.out.println("Label Data Rows: " + rows + " Columns: " + cols);
             trainingLabelMatrix = new Matrix(rowLimiter, cols);
             testingLabelMatrix = new Matrix(rows - rowLimiter, cols);
 
@@ -205,12 +206,16 @@ public class LinearRegressionML {
         Matrix identity = Matrix.identity(column, column);
         identity.times(lambda);
         Matrix dataCopy = data.copy();
-        Matrix transponseData = dataCopy.transpose(); //We transpose the input matrix, swapping cols and rows to make vector math easier
-        Matrix norm = transponseData.times(data); //Here we “normalize” our input data to ensure all values are within the same range
+        Matrix transposeData = dataCopy.transpose(); //We transpose the input matrix, swapping cols and rows to make vector math easier
+        Matrix norm = transposeData.times(data); //Here we “normalize” our input data to ensure all values are within the same range
         Matrix circular = norm.plus(identity);
         Matrix circularInverse = circular.inverse();
         Matrix former = circularInverse.times(data.transpose());
         Matrix weight = former.times(labels);
+
+        dataSetWeights = weight;
+        System.out.println("Weights Columns: " + dataSetWeights.getColumnDimension());
+        System.out.println("Weights Rows: "+dataSetWeights.getRowDimension());
 
         return weight;
     }
@@ -263,9 +268,88 @@ public class LinearRegressionML {
         return sum;
     }
 
+    private void applyPredictions() {
+        List<double[]> testSet = new ArrayList<double[]>();
+        Matrix testWeights = dataSetWeights;
+        testSet = readData(testingFile);
+
+        int testrows = testSet.size();
+        int testcols = testSet.get(0).length;
+        Matrix testSetMatrixtemp = new Matrix(testrows,testcols );
+
+        for (int r = 0; r < testrows; r++) {
+            for (int c = 0; c < testcols; c++) {
+                testSetMatrixtemp.set(r, c, testSet.get(r)[c]);
+            }
+        }
+        Matrix testSetMatrix = biasInsertion(testSetMatrixtemp);
 
 
+        List<Double> predictions = new ArrayList<Double>();
 
+        int cols = testSetMatrix.getColumnDimension();
+        int rows = testSetMatrix.getRowDimension();
+
+        System.out.println("Test Set Rows: " + rows + " Columns: " + cols);
+
+        for (int r = 0; r < rows; r++) {
+            double temp = 0;
+            for (int c = 0; c < cols; c++) {
+                /*if(r == 0) {
+                    System.out.println("*********Row: " + r);
+                    System.out.println("Weight @: " + c+" = " + testWeights.get(c, 0) + " Times value: " + testSetMatrix.get(r, c));
+                    System.out.println("Answer: " + testWeights.get(c, 0) * testSetMatrix.get(r, c));
+                }*/
+                temp += Math.round(testWeights.get(c, 0) * testSetMatrix.get(r, c) * 10000.0) / 10000.0;
+            }
+            System.out.println("Row: " + r + " Value = "+ temp);
+
+            predictions.add(temp);
+        }
+        saveData(predictions);
+        /*for(double answer : predictions) {
+            System.out.println("Answer: " + answer);
+
+        }*/
+
+        //System.out.println("Predictions Rows: " + predictions.size());
+    }
+
+    public static void eraseOldFile() {
+
+        try {
+            PrintWriter writer = new PrintWriter("Data/Answers.txt");
+            writer.print("");
+            writer.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+            System.exit(1);
+        }
+    }
+
+    public static void saveData(List<Double> predictionsToPrint) {
+        eraseOldFile();
+
+        try {
+            FileWriter fw = new FileWriter("Data/Answers.txt",true);
+            BufferedWriter bw = new BufferedWriter(fw);
+            PrintWriter pw = new PrintWriter(bw);
+            //PrintWriter out = new PrintWriter(outputFileName, true);
+
+            //System.out.println(Arrays.deepToString(originalData.getArray()));
+
+            for(int r = 0; r < predictionsToPrint.size(); r++) {
+                pw.println(predictionsToPrint.get(r));
+                //pw.print("");
+            }
+            pw.close();
+
+        } catch (IOException e) {
+            e.printStackTrace();
+            System.exit(1);
+        }
+
+    }
 
 
 
@@ -277,13 +361,18 @@ public class LinearRegressionML {
 
         String dataInfo = "Data/TrainData" + d + ".txt";
         String labelInfo = "Data/TrainLabel" + d + ".txt";
+        String testInfo = "Data/TestData" + d + ".txt";
         System.out.println(dataInfo);
         System.out.println(labelInfo);
 
-        LinearRegressionML lr = new LinearRegressionML(dataInfo, labelInfo);
-        System.out.println("***********" + lr.dataFile+"***********");
-        lr.dataDivider();
+        KNN dirtyData = new KNN(dataInfo, "Data/temp.txt", 2);
+        String cleanedData = dirtyData.getOutputFile();
+        //System.out.println("Output: " + cleanedData);
+
+        LinearRegressionML lr = new LinearRegressionML(cleanedData, labelInfo, testInfo);
+        lr.dataDivider(lr.readData(lr.dataFile));
         lr.getLabels();
+
 
         // get the actual features, meanwhile add a N*1 column vector with value being all 1 as the first column of the features
         Matrix trainingData = lr.biasInsertion(lr.trainingMartrix);
@@ -291,16 +380,17 @@ public class LinearRegressionML {
         Matrix testingData = lr.biasInsertion(lr.testingMatrix);
         Matrix testLabels = lr.testingLabelMatrix;
 
-        System.out.println("Modified Dimensions for training data: " + trainingData.getRowDimension() + " X " + trainingData.getColumnDimension());
+        /*System.out.println("Modified Dimensions for training data: " + trainingData.getRowDimension() + " X " + trainingData.getColumnDimension());
         System.out.println("Modified Dimensions for testing data: " + testingData.getRowDimension() + " X " + testingData.getColumnDimension());
         System.out.println("Training Labels Dimension: " + trainLabels.getRowDimension() + " X " + trainLabels.getColumnDimension());
-        System.out.println("Testing Labels Dimension: " + testLabels.getRowDimension() + " X " + testLabels.getColumnDimension() + "\n");
+        System.out.println("Testing Labels Dimension: " + testLabels.getRowDimension() + " X " + testLabels.getColumnDimension() + "\n");*/
 
         //Train the model
         Matrix weights = lr.trainLinearRegressionModel(trainingData, trainLabels);
-        for (int i = 0; i < weights.getRowDimension(); i++) {
+        lr.applyPredictions();
+       /* for (int i = 0; i < weights.getRowDimension(); i++) {
             System.out.println("Weight " + i + " : " + weights.get(i, 0));
-        }
+        }*/
 
         //Compare model to testing set
         double training_error = lr.evaluateModel(trainingData, trainLabels, weights);
