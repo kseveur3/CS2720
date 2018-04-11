@@ -14,7 +14,6 @@ public class KNN {
     int[] weightRow;
     double[] columWeight;
     public String dataSet;
-    public String originalTestDataSet;
     public String outputFileName;
     int testDataRows;
 
@@ -30,12 +29,10 @@ public class KNN {
 
     public KNN(String trainData, String outputLocation, String testData, String labels, int k, int testDataRowCount) {
 
-        //dataSet = trainData;
         outputFileName = outputLocation;
         kValue = k;
         labelLocation = labels;
         testDataRows = testDataRowCount;
-        //originalTestDataSet = testData;
         compileData(trainData,testData);
         dataSet = "Data/mergedFiles.txt";
         readDataFile(dataSet,0);
@@ -64,8 +61,6 @@ public class KNN {
                     }
                 }
                 dataArray.add(data);
-
-
                 if (dataArray.size() > 0) {
                     int cols = dataArray.get(0).length;
                     int rows = dataArray.size();
@@ -75,9 +70,7 @@ public class KNN {
                         for (int c = 0; c < cols; c++) {
                             myMatrix.set(r, c, dataArray.get(r)[c]);
                         }
-
                     }
-
                     originalData = myMatrix;
                 }
             }
@@ -89,20 +82,6 @@ public class KNN {
         if(option == 1) {
             process();
         }
-
-       /* double[][] valsTransposed = originalData.getArray();
-        for (int i = 0; i < valsTransposed.length; i++) {
-            for (int j = 0; j < valsTransposed[i].length; j++) {
-                System.out.print(valsTransposed[i][j]);
-                if (j < valsTransposed[i].length - 2) {
-                    System.out.print(", ");
-                }
-            }
-            System.out.println();
-
-        }*/
-
-        //saveData();
     }
 
 
@@ -113,14 +92,10 @@ public class KNN {
                 System.out.println("ERROR: your K value cannot be larger than your Row Count!!");
                 System.exit(1);
             }
-            //kValue = k;
 
             for (int r = 0; r < rows; r++) {
                 for (int c = 0; c < cols; c++) {
                     if ((originalData.get(r, c)) > 1000) {
-                        //System.out.println("Row: " + r+ " Column: " + c);
-                        //System.out.println("Cell Data: " + originalData.get(r, c));
-
                         originalData.set(r, c, findMissingData(r, c));
                     }
                 }
@@ -130,15 +105,12 @@ public class KNN {
 
 
     public double findMissingData(int row, int column) {
-        //List<double[]> neighbors = new ArrayList<double[]>();
         createCleanData();
 
         int rowCount = cleanMatrix.getRowDimension();
         int columnCount = cleanMatrix.getColumnDimension();
         double estimation = 0;
-        //List<Double> instanceTotals = new ArrayList<>();
         Map<Integer, Double> instanceTotals = new HashMap<Integer, Double>();
-        //Map<Integer, Double> instanceTotalsSorted = new HashMap<Integer, Double>();
 
 
         for (int r = 0; r < rowCount; r++) {
@@ -155,7 +127,7 @@ public class KNN {
 
         knnMath(sortByValue(instanceTotals));
         for(int idx = 0; idx < weightRow.length; idx++) {
-            estimation += Math.round(cleanMatrix.get(weightRow[idx], column) * columWeight[idx] * 1000.0) / 1000.0;
+            estimation += Math.round(cleanMatrix.get(weightRow[idx], column) * columWeight[idx] * 1.0) / 1.0;
         }
         return estimation;
     }
@@ -163,7 +135,6 @@ public class KNN {
     private void knnMath(Map<Integer, Double> data) {
 
         int kLimit = kValue;
-        //List<double[]> weights = new ArrayList<double[]>();
         double[] distance = new double[kValue];
         weightRow = new int[kValue];
 
@@ -171,7 +142,6 @@ public class KNN {
         columWeight = new double[kValue];
 
         for (Map.Entry<Integer, Double> entry : data.entrySet()) {
-            //double data1[] = new double[kValue];
             if (kLimit > 0) {
                 weightRow[kLimit-1] = entry.getKey();
                 distance[kLimit-1] = 1/entry.getValue();
@@ -186,21 +156,18 @@ public class KNN {
 
 
     /**
-     * Takes the original data set and removes all instances that have missing data
+     * Takes the original data set and removes all instances (rows) that have missing data
      */
     private void createCleanData() {
         List<double[]> neighbors = new ArrayList<double[]>();
         int rowCount = originalData.getRowDimension();
         int columnCount = originalData.getColumnDimension();
 
-
         for (int r = 0; r < rowCount; r++) {
             double data[] = new double[columnCount];
             int skip = -1;
             for (int c = 0; c < columnCount; c++) {
                 if (originalData.get(r, c) > 1000) {
-                    //System.out.println("Row: " + r +" Column: " + columnCount);
-                   // System.out.println("What is the value here: " + originalData.get(r, c));
                     skip = 1;
                 } else {
                     data[c] = originalData.get(r, c);
@@ -210,7 +177,6 @@ public class KNN {
                 neighbors.add(data);
             }
         }
-
         cleanMatrix = new Matrix(neighbors.size(), neighbors.get(0).length);
         for (int r = 0; r < neighbors.size(); r++) {
             for (int c = 0; c < neighbors.get(0).length; c++) {
@@ -223,12 +189,9 @@ public class KNN {
 
     private static Map<Integer, Double> sortByValue(Map<Integer, Double> unsortedMap) {
 
-        // Convert Map to List of Map
         List<Map.Entry<Integer, Double>> list = new LinkedList<Map.Entry<Integer, Double>>(unsortedMap.entrySet());
 
 
-        // Sort list with Collections.sort(), provide a custom Comparator
-        //    Try switch the o1 o2 position for a different order
         Collections.sort(list, new Comparator<Map.Entry<Integer, Double>>() {
             public int compare(Map.Entry<Integer, Double> o1,
                                Map.Entry<Integer, Double> o2) {
@@ -236,19 +199,10 @@ public class KNN {
             }
         });
 
-        // Loop the sorted list and put it into a new insertion order Map LinkedHashMap
         Map<Integer, Double> sortedMap = new LinkedHashMap<Integer, Double>();
         for (Map.Entry<Integer, Double> entry : list) {
             sortedMap.put(entry.getKey(), entry.getValue());
         }
-
-        /*
-        //classic iterator example
-        for (Iterator<Map.Entry<String, Integer>> it = list.iterator(); it.hasNext(); ) {
-            Map.Entry<String, Integer> entry = it.next();
-            sortedMap.put(entry.getKey(), entry.getValue());
-        }*/
-
         return sortedMap;
     }
 
@@ -271,34 +225,16 @@ public class KNN {
             FileWriter fw = new FileWriter(outputFileName,true);
             BufferedWriter bw = new BufferedWriter(fw);
             PrintWriter pw = new PrintWriter(bw);
-            //PrintWriter out = new PrintWriter(outputFileName, true);
 
-            //System.out.println(Arrays.deepToString(originalData.getArray()));
 
             for(int r = 0; r < originalData.getRowDimension(); r++) {
                 for(int c = 0; c < originalData.getColumnDimension(); c++) {
-                    //System.out.print(originalData.get(r,c));
-                    pw.print(originalData.get(r,c));
+                    pw.print(originalData.get(r, c));
                     if (c < originalData.getColumnDimension() - 1) {
-                        //System.out.print(", ");
                         pw.print(", ");
                     }
-
-            }
-
-            /*double[][] valsTransposed = originalData.getArray();
-            for (int i = 0; i < valsTransposed.length; i++) {
-                for (int j = 0; j < valsTransposed[i].length; j++) {
-                    System.out.print(valsTransposed[i][j]);
-                    pw.print(valsTransposed[i][j]);
-                    if (j < valsTransposed[i].length - 2) {
-                        System.out.print(", ");
-                        pw.print(", ");
-                    }
-                }*/
+                }
                 pw.println("");
-                //System.out.println();
-
             }
             pw.close();
 
@@ -306,7 +242,6 @@ public class KNN {
             e.printStackTrace();
             System.exit(1);
        }
-
    }
 
    public String getOutputFile() {
@@ -333,8 +268,6 @@ public class KNN {
        File mergedFile = new File(mergedFilePath);
 
        MergeFiles.mergeFiles(files, mergedFile);
-
-
    }
 
     /**
@@ -352,32 +285,24 @@ public class KNN {
                line = line.trim();
                line = line.replaceAll("\\s+", ",");
                String fields[] = line.split(",");
-               System.out.println("Line: " + line);
-
 
                double data[] = new double[fields.length];
 
                for (int i = 0; i < fields.length; i++) {
                    if (!fields[i].contains(" ")) {
-                       System.out.println("Value of Fields " + i + " = " + fields[i]);
                        data[i] = Double.valueOf(fields[i]);
                    }
                }
                dataArray.add(data);
-
            }
            System.out.println("Labels Row Count: " + dataArray.size());
-
 
                if (dataArray.size() > 0) {
                    int rows = myMatrix.getRowDimension();
                    int cols = myMatrix.getColumnDimension();
-                   System.out.println("RowCount: " + rows + " ColumnCount: " + cols);
-
 
                    for (int r = 0; r < rows; r++) {
                        for (int c = 0; c < cols; c++) {
-                           //System.out.println("What is C: " + c);
                            if (c == (cols - 1) && r < dataArray.size()) {
                                myMatrix.set(r, c, dataArray.get(r)[0]);
                            } else if (c == (cols - 1)) {
@@ -389,13 +314,11 @@ public class KNN {
                    }
                    originalData = myMatrix;
                }
-
        } catch (Exception e) {
            e.printStackTrace();
            System.exit(1);
        }
        saveData();
-
    }
 
     /**
@@ -408,31 +331,25 @@ public class KNN {
        int rows = originalData.getRowDimension();
        int cols = originalData.getColumnDimension();
        int limiter = rows - testDataRows;
-       System.out.println("Limiter = " + limiter);
 
        List<Double> answers = new ArrayList<Double>();
-
-       System.out.println("Test Set Rows: " + rows + " Columns: " + cols);
-
 
        for (int r = limiter; r < rows; r++) {
            double temp = 0;
            for (int c = 0; c < cols; c++) {
                if(c == cols -1) {
-                   temp = originalData.get(r,c);
+                   temp = originalData.get(r,c) * 100;
                }
            }
            answers.add(temp);
        }
-
        LinearRegressionML.saveData(answers);
-
-
    }
 
 
     public static void main(String[] args) {
-        KNN knn = new KNN("Data/TrainData4.txt", "Data/temp.txt", "Data/TestData4.txt", "Data/TrainLabel4.txt",2, 1092);
+       //KNN knn = new KNN("Data/TrainData1.txt", "Data/temp.txt", "Data/TestData1.txt", "Data/TrainLabel1.txt",40, 53);
+        //KNN knn = new KNN("Data/train3.txt", "Data/Answers.txt", 40);
     }
 
     }
