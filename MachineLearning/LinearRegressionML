@@ -19,7 +19,6 @@ import java.util.Scanner;
 public class LinearRegressionML {
     public String dataFile;
     public String labelFile;
-    public String trainingFile;
     public String testingFile;
     public Matrix trainingMartrix;
     public Matrix testingMatrix;
@@ -28,12 +27,14 @@ public class LinearRegressionML {
     public int rowLimiter;
     public Double lambda;
     public Matrix dataSetWeights;
+    public int doImpute;
 
-    public LinearRegressionML(String originalData, String originalLabels, String testData) {
+    public LinearRegressionML(String originalData, String originalLabels, String testData, int impute) {
         lambda = 1.0;
         dataFile = originalData;
         labelFile = originalLabels;
         testingFile = testData;
+        doImpute = impute;
 
     }
 
@@ -92,27 +93,32 @@ public class LinearRegressionML {
                     }
                 }
             }
-            //trainingMartrix = impute(trainingMartrix);
-            //testingMatrix = impute(testingMatrix);
+            if(doImpute == 1) {
+                trainingMartrix = impute(trainingMartrix);
+                testingMatrix = impute(testingMatrix);
+            }
         }
 
         System.out.println("Training Matrix size: " + trainingMartrix.getRowDimension() + " X " + trainingMartrix.getColumnDimension());
         System.out.println("Testing Matrix size: " + testingMatrix.getRowDimension() + " X " + testingMatrix.getColumnDimension());
     }
 
-    private Matrix impute(Matrix m) {
+    public Matrix impute(Matrix m) {
         int rows = m.getRowDimension();
         int cols = m.getColumnDimension();
         double data[] = new double[cols];
         double sum = 0;
+
         for (int c = 0; c < cols; c++) {
             sum = 0;
+            int counter = 0;
             for (int r = 0; r < rows; r++) {
                 if (m.get(r, c) < 100) {
                     sum += m.get(r, c);
+                    counter++;
                 }
             }
-            data[c] = sum / rows;
+            data[c] = sum / counter;
         }
 
         for (int c = 0; c < cols; c++) {
@@ -214,8 +220,6 @@ public class LinearRegressionML {
         Matrix weight = former.times(labels);
 
         dataSetWeights = weight;
-        System.out.println("Weights Columns: " + dataSetWeights.getColumnDimension());
-        System.out.println("Weights Rows: "+dataSetWeights.getRowDimension());
 
         return weight;
     }
@@ -295,24 +299,11 @@ public class LinearRegressionML {
         for (int r = 0; r < rows; r++) {
             double temp = 0;
             for (int c = 0; c < cols; c++) {
-                /*if(r == 0) {
-                    System.out.println("*********Row: " + r);
-                    System.out.println("Weight @: " + c+" = " + testWeights.get(c, 0) + " Times value: " + testSetMatrix.get(r, c));
-                    System.out.println("Answer: " + testWeights.get(c, 0) * testSetMatrix.get(r, c));
-                }*/
-                temp += Math.round(testWeights.get(c, 0) * testSetMatrix.get(r, c) * 10000.0) / 10000.0;
+                temp += Math.round(testWeights.get(c, 0) * testSetMatrix.get(r, c) * 100.0) / 100.0;
             }
-            System.out.println("Row: " + r + " Value = "+ temp);
-
             predictions.add(temp);
         }
         saveData(predictions);
-        /*for(double answer : predictions) {
-            System.out.println("Answer: " + answer);
-
-        }*/
-
-        //System.out.println("Predictions Rows: " + predictions.size());
     }
 
     public static void eraseOldFile() {
@@ -334,13 +325,9 @@ public class LinearRegressionML {
             FileWriter fw = new FileWriter("Data/Answers.txt",true);
             BufferedWriter bw = new BufferedWriter(fw);
             PrintWriter pw = new PrintWriter(bw);
-            //PrintWriter out = new PrintWriter(outputFileName, true);
-
-            //System.out.println(Arrays.deepToString(originalData.getArray()));
 
             for(int r = 0; r < predictionsToPrint.size(); r++) {
-                pw.println(predictionsToPrint.get(r));
-                //pw.print("");
+                pw.println(round(predictionsToPrint.get(r),0));
             }
             pw.close();
 
@@ -349,6 +336,16 @@ public class LinearRegressionML {
             System.exit(1);
         }
 
+        }
+
+    public static double round(double value, int places) {
+        if (places < 0) throw new IllegalArgumentException();
+
+        long factor = (long) Math.pow(10, places);
+        value = value * factor;
+        long tmp = Math.round(value);
+        return (double) tmp / factor;
+
     }
 
 
@@ -356,20 +353,80 @@ public class LinearRegressionML {
 
     public static void main(String[] args) {
         Scanner reader = new Scanner(System.in);
+        String cleanedData = "";
+        int imputerRequest = 0;
+        System.out.println("Please select which would you like to do:" +
+                "\n1)           Classification (Option 1)" +
+                "\n2)           Missing Data Valuation (Option 2)");
+        int f = reader.nextInt();
+        if( f != 1 && f != 2) {
+            System.out.println(" You must select a 1 or a 2!!");
+            System.exit(1);
+        }
         System.out.println("Enter the NUMBER of the DATA file you want to run: ");
         int d = reader.nextInt();
 
         String dataInfo = "Data/TrainData" + d + ".txt";
         String labelInfo = "Data/TrainLabel" + d + ".txt";
         String testInfo = "Data/TestData" + d + ".txt";
-        System.out.println(dataInfo);
-        System.out.println(labelInfo);
 
-        KNN dirtyData = new KNN(dataInfo, "Data/temp.txt", 2);
-        String cleanedData = dirtyData.getOutputFile();
+
+        if(f == 1) {
+            if (d == 2 || d == 5) {
+                System.out.println(dataInfo);
+                System.out.println(labelInfo);
+                KNN dirtyData = new KNN(dataInfo, "Data/temp.txt", 2);
+                cleanedData = dirtyData.getOutputFile();
+            } else if (d == 1) {
+                System.out.println("*********** This is a very large data set and can take as much as 2 minutes to run! ************");
+                System.out.println(dataInfo);
+                System.out.println(labelInfo);
+                imputerRequest = 1;
+                cleanedData = dataInfo;
+            } else if (d == 3) {
+                System.out.println(dataInfo);
+                System.out.println(labelInfo);
+                KNN knn = new KNN(dataInfo, "Data/temp.txt", testInfo, labelInfo, 2, 2693);
+                System.out.println("\nYour results are posted in the Data/Answers.txt file!");
+                System.out.println("\nDone");
+                System.exit(1);
+
+            } else if (d == 4) {
+                System.out.println(dataInfo);
+                System.out.println(labelInfo);
+                KNN knn = new KNN(dataInfo, "Data/temp.txt", testInfo, labelInfo, 2, 1092);
+                System.out.println("\nYour results are posted in the Data/Answers.txt file!");
+                System.out.println("\nDone");
+                System.exit(1);
+
+            } else {
+                System.out.println(" You must enter a value between 1 and 5!!");
+                System.exit(1);
+            }
+        } else if(f == 2) {
+            if(d == 1) {
+                System.out.println("Data/MissingData1.txt");
+                KNN knn = new KNN("Data/MissingData1.txt", "Data/Answers.txt", 2);
+                System.out.println("Your results are posted in the Data/Answers.txt file!");
+                System.out.println("\nDone");
+                System.exit(1);
+            } else if(d == 2) {
+                System.out.println("Data/MissingData2.txt");
+                KNN knn = new KNN("Data/MissingData2.txt", "Data/Answers.txt", 2);
+                System.out.println("Your results are posted in the Data/Answers.txt file!");
+                System.out.println("\nDone");
+                System.exit(1);
+            } else {
+                System.out.println(" You must enter a 1 or a 2 for Missing Data Valuation!!");
+                System.exit(1);
+            }
+
+        }
+
+
         //System.out.println("Output: " + cleanedData);
 
-        LinearRegressionML lr = new LinearRegressionML(cleanedData, labelInfo, testInfo);
+        LinearRegressionML lr = new LinearRegressionML(cleanedData, labelInfo, testInfo,imputerRequest);
         lr.dataDivider(lr.readData(lr.dataFile));
         lr.getLabels();
 
@@ -388,9 +445,9 @@ public class LinearRegressionML {
         //Train the model
         Matrix weights = lr.trainLinearRegressionModel(trainingData, trainLabels);
         lr.applyPredictions();
-       /* for (int i = 0; i < weights.getRowDimension(); i++) {
+        for (int i = 0; i < weights.getRowDimension(); i++) {
             System.out.println("Weight " + i + " : " + weights.get(i, 0));
-        }*/
+        }
 
         //Compare model to testing set
         double training_error = lr.evaluateModel(trainingData, trainLabels, weights);
@@ -404,8 +461,8 @@ public class LinearRegressionML {
 
 
 
-
-        System.out.println("\nDone");
+        System.out.println("\n\nYour results are posted in the Data/Answers.txt file!");
+        System.out.println("Done");
 
     }
 
